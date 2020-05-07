@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">MyParking</string>
+    <string name="title_activity_sign_up_screen">SignUpScreen</string>
+    <!-- Login strings -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="create_account">Create Account</string>
+    <string name="existing_account">Existing Account?</string>
+    <string name="signout">Sign out</string>
+    <string name="send">Send</string>
+    <string name="welcome">Welcome</string>
+    <string name="signin">Sign in to continue</string>
+    <string name="new_user">New User?</string>
+    <string name="username">Full Name</string>
+    <string name="number">Mobile Number</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="settings">Settings</string>
+    <string name="privacy_and_logout">Privacy and Logout</string>
+    <string name="help"><![CDATA[Help & Support]]></string>
+    <string name="help_legal_terms">Help center and legal terms</string>
+    <string name="logout">Logout</string>
+    <string name="delete_account">Delete Account and Data</string>
+    <string name="photo">Take or choose 5 photo</string>
+    <string name="title">Ad Title</string>
+    <string name="description">Ad Description</string>
+    <string name="price">Price</string>
+    <string name="postad">Post Ad</string>
+    <string name="vehicle_type">Vehicle Type:</string>
+    <string name="photo_added">Added %1$d of 5 photos</string>
+    <string name="location">Location</string>
+    <string name="timestamp">timestamp</string>
+    <string name="set_price">₹ %1$s</string>
+    <string name="choose_location">Choose Location:</string>
+    <string name="click_to_choose">Tap to enter location!</string>
+
+    <string name="cancel">CANCEL</string>
+    <string name="ok">OK</string>
+    <string name="enter_location_hint">Enter location</string>
+    <string name="myads">My Ads</string>
+    <string name="chat">Chat</string>
+    <string name="call">Call</string>
+    <string name="description_head">Description</string>
+    <string name="yourAd">This is your Ad</string>
+    <string name="profile">Profile</string>
+    <string name="start_selling">start selling</string>
+
+    //string array
+    <string-array name="vehicle_type">
+        <item>Two Wheeler</item>
+        <item>Three Wheeler</item>
+        <item>Four Wheeler</item>
+    </string-array>
+</resources>

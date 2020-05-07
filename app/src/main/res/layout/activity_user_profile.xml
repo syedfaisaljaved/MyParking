@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".WorkFlowActivities.UserProfileActivity">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/space">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/user_profile_app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/violet">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/ToolbarColoredBackArrow">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="15dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/profile"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+            <RelativeLayout
+                android:id="@+id/user_profile_layout_relative_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <RelativeLayout
+                    android:id="@+id/user_profile_image_layout"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp">
+
+                    <ImageView
+                        android:id="@+id/user_profile_image"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:src="@drawable/blank_image" />
+
+                    <ImageView
+                        android:id="@+id/user_profile_image_edit"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/circle_shape_default"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_photo_camera" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/user_profile_layout_linear_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/user_profile_image_layout"
+                    android:orientation="vertical"
+                    android:paddingLeft="5dp">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/user_profile_username_profile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:singleLine="true"
+                            android:textColor="@android:color/black"
+                            android:textSize="20sp"
+                            android:visibility="visible" />
+
+                        <EditText
+                            android:textSize="20sp"
+                            android:background="@null"
+                            android:clickable="true"
+                            android:focusableInTouchMode="true"
+                            android:id="@+id/user_profile_username_edit"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:maxLength="20"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:visibility="gone" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/user_profile_email_profile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lines="1"
+                        android:textColor="@android:color/black"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true">
+
+                    <ImageView
+                        android:id="@+id/user_profile_edit_details"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/circle_shape_default"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_edit" />
+
+                    <ImageView
+                        android:visibility="gone"
+                        android:id="@+id/user_profile_done_edit"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/circle_shape"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_check" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/user_profile_layout_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_profile_layout_relative_details"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:padding="20dp">
+
+                <ImageView
+                    android:id="@+id/settings_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_settings" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toLeftOf="@+id/arrow_icon1"
+                    android:layout_toRightOf="@+id/settings_icon"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/privacy_and_logout"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/arrow_icon1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_right_arrow" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/user_profile_layout_help_and_support"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_profile_layout_settings"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:padding="20dp">
+
+                <ImageView
+                    android:id="@+id/help_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_help" />
+
+                <LinearLayout
+                    android:id="@+id/user_profile_layout_help_and_support_child"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toLeftOf="@+id/arrow_icon2"
+                    android:layout_toRightOf="@+id/help_icon"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/help"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/help_legal_terms"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/arrow_icon2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_right_arrow" />
+
+            </RelativeLayout>
+        </LinearLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <com.luseen.spacenavigation.SpaceNavigationView
+        android:id="@+id/space"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        app:centre_button_color="@color/violet"
+        app:centre_button_icon="@drawable/ic_photo_camera"
+        app:inactive_centre_button_icon_color="@color/white"
+        app:inactive_item_color="@android:color/darker_gray"
+        app:space_background_color="@color/white" />
+</RelativeLayout>

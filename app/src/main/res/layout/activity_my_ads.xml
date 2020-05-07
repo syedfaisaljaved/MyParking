@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WorkFlowActivities.MyAdsActivity">
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_above="@+id/space"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:background="@color/violet"
+            android:id="@+id/user_profile_app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/ToolbarColoredBackArrow">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="15dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/myads"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:visibility="gone"
+            android:id="@+id/profile_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <LinearLayout
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_marginTop="30dp"
+                android:visibility="gone"
+                android:id="@+id/no_parking_ads"
+                android:adjustViewBounds="true"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/nothing_found"/>
+
+            <Button
+                android:elevation="10dp"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"
+                android:id="@+id/start_posting_tv"
+                android:layout_marginBottom="20dp"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:text="@string/postad"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:background="@color/violet"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+        </View>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <com.luseen.spacenavigation.SpaceNavigationView
+        android:id="@+id/space"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        app:active_item_color="@color/violet2"
+        app:centre_button_color="@color/violet2"
+        app:inactive_item_color="@android:color/darker_gray"
+        app:space_background_color="@color/white"
+        app:centre_button_icon="@drawable/ic_photo_camera"
+        app:inactive_centre_button_icon_color="@color/white"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>

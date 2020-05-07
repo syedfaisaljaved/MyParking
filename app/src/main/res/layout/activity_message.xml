@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MessageActivity"
+    android:background="@color/gray"
+    android:clipToPadding="false">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_chat_bar">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:background="@color/violet"
+            android:id="@+id/user_profile_app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:theme="@style/ToolbarColoredBackArrow"
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp"
+                app:contentInsetStartWithNavigation="0dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/toolbar_image"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/blank_image" />
+
+                <TextView
+                    android:textColor="@color/white"
+                    android:id="@+id/toolbar_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/username"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="10dp"
+            android:id="@+id/message_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <RelativeLayout
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/bottom_chat_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/send_button_layout"
+        android:background="@drawable/rounded_rect">
+
+        <ImageView
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentLeft="true"
+            android:padding="5dp"
+            android:background="@drawable/circle_shape"
+            android:id="@+id/add_icon"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_photo"></ImageView>
+
+        <EditText
+            android:maxHeight="100dp"
+            android:layout_toRightOf="@+id/add_icon"
+            android:id="@+id/edittext_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@null"
+            android:hint="Type your message"
+            android:inputType="textMultiLine|textCapSentences"
+            android:padding="10dp"></EditText>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:background="@drawable/squircle"
+        android:layout_marginBottom="11dp"
+        android:id="@+id/send_button_layout"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp">
+
+        <ImageView
+            android:id="@+id/send_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_send"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

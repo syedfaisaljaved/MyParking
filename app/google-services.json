@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "650729874493",
+    "firebase_url": "https://myparking-57e90.firebaseio.com",
+    "project_id": "myparking-57e90",
+    "storage_bucket": "myparking-57e90.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650729874493:android:21f0902f7f0706c7123654",
+        "android_client_info": {
+          "package_name": "com.faisaljaved.myparking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "650729874493-mgo9r1m5dmmmpjfde9uvgpsqg5n0atme.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.faisaljaved.myparking",
+            "certificate_hash": "a0a30d1943946afc6eb4589978f12291ab1b534d"
+          }
+        },
+        {
+          "client_id": "650729874493-8nj0canv9oa8c3eomgfd4f9f7u6l39cl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUX0NCncenbXIC2zaQyTMfNOm-FLmei9k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "650729874493-8nj0canv9oa8c3eomgfd4f9f7u6l39cl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

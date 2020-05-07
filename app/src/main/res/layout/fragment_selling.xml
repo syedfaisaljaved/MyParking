@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WorkFlowActivities.ChatFragments.SellingFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/selling_recycler_view"/>
+
+    <ImageView
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:id="@+id/no_messages_yet"
+        android:adjustViewBounds="true"
+        android:padding="50dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/no_messages"/>
+    <Button
+        android:visibility="gone"
+        android:layout_below="@+id/no_messages_yet"
+        android:id="@+id/start_selling_tv"
+        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="@string/start_selling"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:background="@color/violet"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:gravity="center"/>
+</RelativeLayout>

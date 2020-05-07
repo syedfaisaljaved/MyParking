@@ -1,0 +1,25 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme1" parent="Theme.AppCompat.Light.NoActionBar" xmlns:tools="http://schemas.android.com/tools">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/violet</item>
+        <item name="colorAccent">@color/violet</item>
+
+    </style>
+
+    <style name="BlackStatusBar" parent="AppTheme1">
+        <item name="colorPrimaryDark">@color/black</item>
+    </style>
+
+    <style name="ToolbarColoredBackArrow" parent="AppTheme1">
+        <item name="android:textColorSecondary">@color/white</item>
+    </style>
+
+    <style name="LoginTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">#673AB7</item>
+        <item name="boxStrokeWidth">2dp</item>
+    </style>
+
+</resources>
