@@ -14,6 +14,7 @@ public class AdDataViewHolder extends RecyclerView.ViewHolder implements View.On
 
     TextView mAdPrice, mAdTitle, mAdLocation, mAdTimeStamp, mAdVehicleType;
     AppCompatImageView mAdImage;
+    TextView swipeToDelete;
     OnDataClickListener mOnDataClickListener;
 
     public AdDataViewHolder(@NonNull View itemView, OnDataClickListener onDataClickListener) {
@@ -26,6 +27,7 @@ public class AdDataViewHolder extends RecyclerView.ViewHolder implements View.On
         mAdLocation = (TextView) itemView.findViewById(R.id.ad_location);
         mAdTimeStamp = (TextView) itemView.findViewById(R.id.ad_timestamp);
         mAdImage = (AppCompatImageView) itemView.findViewById(R.id.ad_image);
+        swipeToDelete = itemView.findViewById(R.id.swipe_to_delete);
         itemView.setOnClickListener(this);
     }
 

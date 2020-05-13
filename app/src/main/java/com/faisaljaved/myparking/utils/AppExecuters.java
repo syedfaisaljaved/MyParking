@@ -1,4 +1,4 @@
-package com.faisaljaved.myparking;
+package com.faisaljaved.myparking.utils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

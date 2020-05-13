@@ -1,24 +1,17 @@
-package com.faisaljaved.myparking.WorkFlowActivities;
+package com.faisaljaved.myparking.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,10 +19,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.faisaljaved.myparking.BaseActivity;
-import com.faisaljaved.myparking.LoginActivity;
-import com.faisaljaved.myparking.PostAdActivity;
 import com.faisaljaved.myparking.R;
-import com.faisaljaved.myparking.WorkFlowActivities.UserProfileActivites.Settings;
+import com.faisaljaved.myparking.models.Images;
 import com.faisaljaved.myparking.models.UserDetails;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,7 +32,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.luseen.spacenavigation.SpaceItem;
@@ -51,10 +41,11 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
-import java.util.List;
 
 import me.shaohui.advancedluban.Luban;
 import me.shaohui.advancedluban.OnCompressListener;
+
+import static com.faisaljaved.myparking.utils.RealPathUtil.getRealPathFromURI_API19;
 
 public class UserProfileActivity extends BaseActivity {
 
@@ -95,6 +86,8 @@ public class UserProfileActivity extends BaseActivity {
         mDoneEdit = findViewById(R.id.user_profile_done_edit);
 
         showFetchedData();
+        String oldImage = mProfileImage.getDrawable().toString();
+        Log.d(TAG, "onComplete: image url "+ oldImage);
 
         mSettings.setOnClickListener(listener);
         mImageEdit.setOnClickListener(listener);
@@ -130,9 +123,10 @@ public class UserProfileActivity extends BaseActivity {
 
                 case R.id.user_profile_done_edit:
                     String newName = mUsernameEdit.getText().toString().trim();
-                    if (!newName.isEmpty() && !newName.equals(mFullname.getText().toString())){
+                    String oldname = mFullname.getText().toString();
+                    if (!newName.isEmpty() && !newName.equals(oldname)){
                         mFullname.setText(newName);
-                        updateUsernameFirebase(newName);
+                        updateUsernameFirebase(newName, oldname);
                     }
                     mFullname.setVisibility(View.VISIBLE);
                     mUsernameEdit.setVisibility(View.GONE);
@@ -143,9 +137,40 @@ public class UserProfileActivity extends BaseActivity {
         }
     };
 
-    private void updateUsernameFirebase(String newName) {
+    private void updateUsernameFirebase(final String newName, final String oldname) {
         DatabaseReference postRef = reference;
         postRef.child("username").setValue(newName);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("sellers_buyers");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: datasnapshot "+ dataSnapshot);
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: postsnapshot "+ postSnapshot);
+                    for (DataSnapshot snapshot :postSnapshot.getChildren()) {
+                        Log.d(TAG, "onDataChange: snapshot "+ snapshot);
+                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                            Log.d(TAG, "onDataChange: child snapshot "+ childSnapshot);
+                            for (DataSnapshot lastSnapshot : childSnapshot.getChildren()) {
+                                Log.d(TAG, "onDataChange: lastsnapshot " + lastSnapshot);
+                                if (lastSnapshot.child("buyerUsername").getValue().equals(oldname)){
+                                    lastSnapshot.child("buyerUsername").getRef().setValue(newName);
+                                }
+                                if (lastSnapshot.child("sellerUsername").getValue().equals(oldname)){
+                                    lastSnapshot.child("sellerUsername").getRef().setValue(newName);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -157,19 +182,17 @@ public class UserProfileActivity extends BaseActivity {
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 compressImage(resultUri);
+
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
         }
     }
 
-    private void compressImage(Uri resultUri) {
-        File file = new File(resultUri.getPath());
-        Luban.compress(file, getFilesDir())
-                .setMaxSize(100)
-                .setMaxHeight(100)
-                .setMaxWidth(100)
-                .putGear(Luban.CUSTOM_GEAR)
+    private void compressImage(Uri uri) {
+        File file = new File(uri.getPath());
+        Luban.compress(this, file)
+                .putGear(Luban.THIRD_GEAR)
                 .launch(new OnCompressListener() {
                     @Override
                     public void onStart() {
@@ -178,7 +201,7 @@ public class UserProfileActivity extends BaseActivity {
 
                     @Override
                     public void onSuccess(File file) {
-                       uploadImagetoFirebase(file);
+                        uploadImagetoFirebase(file);
                         Glide.with(getApplicationContext())
                                 .load(Uri.fromFile(file))
                                 .apply(RequestOptions.circleCropTransform())
@@ -187,13 +210,15 @@ public class UserProfileActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
+
                     }
                 });
     }
 
+
     private void uploadImagetoFirebase(File file) {
-        final StorageReference imageRef = FirebaseStorage.getInstance().getReference().child("profileImages");
+        Images profileImage = new Images(file.getName(),Uri.fromFile(file));
+        final StorageReference imageRef = FirebaseStorage.getInstance().getReference().child("profileImages").child(profileImage.getImageName());
         imageRef.putFile(Uri.fromFile(file)).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -201,8 +226,24 @@ public class UserProfileActivity extends BaseActivity {
                     imageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
-                            DatabaseReference postRef = reference;
-                            postRef.child("image").setValue(task.getResult().toString());
+                            final String newImage = task.getResult().toString();
+                            Log.d(TAG, "onComplete: task " + task.getResult());
+                            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    UserDetails user = dataSnapshot.getValue(UserDetails.class);
+                                    String oldImage = user.getImage();
+                                    Log.d(TAG, "onDataChange: old image "+ oldImage);
+                                    updateImageFirebase(newImage, oldImage);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+
                         }
                     });
                 }
@@ -210,8 +251,51 @@ public class UserProfileActivity extends BaseActivity {
         });
     }
 
+    private void updateImageFirebase(final String newImage, final String oldImage) {
+        // delete old image
+        if (!oldImage.equals("default")) {
+            final StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(oldImage);
+            imageRef.delete();
+        }
+
+        reference.child("image").setValue(newImage);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("sellers_buyers");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: datasnapshot "+ dataSnapshot);
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: postsnapshot "+ postSnapshot);
+                    for (DataSnapshot snapshot :postSnapshot.getChildren()) {
+                        Log.d(TAG, "onDataChange: snapshot "+ snapshot);
+                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                            Log.d(TAG, "onDataChange: child snapshot "+ childSnapshot);
+                            for (DataSnapshot lastSnapshot : childSnapshot.getChildren()) {
+                                Log.d(TAG, "onDataChange: lastsnapshot " + lastSnapshot);
+                                if (lastSnapshot.child("buyerImage").getValue().equals(oldImage)
+                                        && lastSnapshot.child("buyerUsername").getValue().equals(mFullname.getText().toString()) ){
+                                    lastSnapshot.child("buyerImage").getRef().setValue(newImage);
+                                }
+                                if (lastSnapshot.child("sellerImage").getValue().equals(oldImage)
+                                        && lastSnapshot.child("sellerUsername").getValue().equals(mFullname.getText().toString())){
+                                    lastSnapshot.child("sellerImage").getRef().setValue(newImage);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void showFetchedData() {
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 UserDetails user = new UserDetails();
@@ -263,21 +347,23 @@ public class UserProfileActivity extends BaseActivity {
                 startActivity(intent);
             }
 
-
             @Override
             public void onItemClick(int itemIndex, String itemName) {
                 switch (itemIndex) {
 
                     case 0:
                         Intent goToProfile = new Intent(UserProfileActivity.this, ProfileActivity.class);
+                        goToProfile.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(goToProfile);
                         break;
                     case 1:
                         Intent goToChats = new Intent(UserProfileActivity.this, ChatsActivity.class);
+                        goToChats.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(goToChats);
                         break;
                     case 2:
                         Intent goToMyAds = new Intent(UserProfileActivity.this, MyAdsActivity.class);
+                        goToMyAds.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(goToMyAds);
                         break;
                 }
@@ -287,9 +373,14 @@ public class UserProfileActivity extends BaseActivity {
 
             @Override
             public void onItemReselected(int itemIndex, String itemName) {
-
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        spaceNavigationView.changeCurrentItem(3);
     }
 
     @Override

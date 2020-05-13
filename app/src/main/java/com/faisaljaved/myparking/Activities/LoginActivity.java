@@ -1,19 +1,18 @@
-package com.faisaljaved.myparking;
+package com.faisaljaved.myparking.Activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.faisaljaved.myparking.WorkFlowActivities.ProfileActivity;
+import com.faisaljaved.myparking.BaseActivity;
+import com.faisaljaved.myparking.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -111,7 +110,6 @@ public class LoginActivity extends BaseActivity {
                 case R.id.forgot_password_text_view:
 
                     startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
-                    finish();
                     break;
 
             }

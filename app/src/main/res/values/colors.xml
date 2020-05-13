@@ -13,5 +13,6 @@
     <color name="lightgray">#F5F5F5</color>
     <color name="orange">#FF9800</color>
     <color name="shimmerBackground">#D0D0D0</color>
+    <color name="black_95">#F2000000</color>
     <color name="mtrl_textinput_default_box_stroke_color">#673AB7</color>
 </resources>

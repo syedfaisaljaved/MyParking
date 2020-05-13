@@ -1,4 +1,4 @@
-package com.faisaljaved.myparking.WorkFlowActivities.ChatFragments;
+package com.faisaljaved.myparking.Activities.ChatFragments;
 
 
 import android.content.Intent;
@@ -12,15 +12,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.faisaljaved.myparking.MessageActivity;
-import com.faisaljaved.myparking.PostAdActivity;
+import com.faisaljaved.myparking.Activities.MessageActivity;
+import com.faisaljaved.myparking.Activities.PostAdActivity;
 import com.faisaljaved.myparking.R;
 import com.faisaljaved.myparking.adapters.ChatUsersListAdapter;
 import com.faisaljaved.myparking.listener.OnDataClickListener;
@@ -31,9 +30,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
-public class Buyingfragment extends Fragment implements OnDataClickListener {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class SellingFragment extends Fragment implements OnDataClickListener {
 
-    private static final String TAG = "Buyingfragment";
+    private static final String TAG = "SellingFragment";
 
     //Ui components
     private RecyclerView recyclerView;
@@ -42,12 +44,11 @@ public class Buyingfragment extends Fragment implements OnDataClickListener {
 
     private ChatUsersListAdapter chatUsersListAdapter;
     private ChatUsersViewModel chatUsersViewModel;
-
     //firebase
     private FirebaseUser mUser;
     private String mUserId;
 
-    public Buyingfragment() {
+    public SellingFragment() {
         // Required empty public constructor
     }
 
@@ -67,9 +68,9 @@ public class Buyingfragment extends Fragment implements OnDataClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_buying, container, false);
+        View view = inflater.inflate(R.layout.fragment_selling, container, false);
 
-        recyclerView = view.findViewById(R.id.buying_recycler_view);
+        recyclerView = view.findViewById(R.id.selling_recycler_view);
         mNoMsg = view.findViewById(R.id.no_messages_yet);
         mStartSelling = view.findViewById(R.id.start_selling_tv);
         mStartSelling.setOnClickListener(new View.OnClickListener() {
@@ -82,28 +83,26 @@ public class Buyingfragment extends Fragment implements OnDataClickListener {
 
         initRectyclerview();
         subscribeObservers();
-        chatUsersViewModel.loadBuyingUsersFromFirebase(mUserId);
+        chatUsersViewModel.loadSellingUsersFromFirebase(mUserId);
 
         return view;
     }
 
     private void subscribeObservers() {
-        chatUsersViewModel.getBuyersList().observe(getViewLifecycleOwner(), new Observer<List<ChatUsers>>() {
+        chatUsersViewModel.getSellersList().observe(getViewLifecycleOwner(), new Observer<List<ChatUsers>>() {
             @Override
             public void onChanged(List<ChatUsers> chatUsers) {
-                Log.d(TAG, "onChanged: "+chatUsers);
                 if (chatUsers!= null){
                     if (chatUsers.size() == 0){
                         recyclerView.setVisibility(View.GONE);
                         mNoMsg.setVisibility(View.VISIBLE);
                         mStartSelling.setVisibility(View.VISIBLE);
                     }else {
-                        chatUsersListAdapter.setBuyingUserData(chatUsers);
+                        chatUsersListAdapter.setSellingUserData(chatUsers);
                         recyclerView.setVisibility(View.VISIBLE);
                         mNoMsg.setVisibility(View.GONE);
                         mStartSelling.setVisibility(View.GONE);
                     }
-
                 }
             }
         });
@@ -117,14 +116,13 @@ public class Buyingfragment extends Fragment implements OnDataClickListener {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setHasFixedSize(true);
-
     }
 
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(getActivity(), MessageActivity.class);
-        intent.putExtra("userData",chatUsersListAdapter.getSelectedBUserData(position));
-        Log.d(TAG, "onItemClick: "+ chatUsersListAdapter.getSelectedBUserData(position));
+        intent.putExtra("userData",chatUsersListAdapter.getSelectedSUserData(position));
+        intent.putExtra("sellerFragment", "sent");
         startActivity(intent);
     }
 }

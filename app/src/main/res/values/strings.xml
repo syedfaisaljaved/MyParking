@@ -50,11 +50,13 @@
     <string name="yourAd">This is your Ad</string>
     <string name="profile">Profile</string>
     <string name="start_selling">start selling</string>
+    <string name="clearchat">Clear chat</string>
+    <string name="deletechat">Delete chat</string>
+    <string name="swipetodelete">Swipe to delete Ads!</string>
+    <string name="rentyouparking">Rent your parking space</string>
+    <string name="dismiss">Cancel</string>
+    <string name="two_wheeler">Two Wheeler</string>
+    <string name="three_wheeler">Three Wheeler</string>
+    <string name="four_wheeler">Four Wheeler</string>
 
-    //string array
-    <string-array name="vehicle_type">
-        <item>Two Wheeler</item>
-        <item>Three Wheeler</item>
-        <item>Four Wheeler</item>
-    </string-array>
 </resources>

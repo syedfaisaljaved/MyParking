@@ -1,10 +1,12 @@
 package com.faisaljaved.myparking.adapters;
 
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -38,7 +40,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = null;
-        switch (viewType){
+        switch (viewType) {
             case LEFT_MESSAGE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_received_item_layout, parent, false);
                 return new MessageViewHolder(view, mOnDataClickListener);
@@ -47,9 +49,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_sent_item_layout, parent, false);
                 return new MessageViewHolder(view, mOnDataClickListener);
 
-             default:
-                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_sent_item_layout, parent, false);
-                 return new MessageViewHolder(view, mOnDataClickListener);
+            default:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_sent_item_layout, parent, false);
+                return new MessageViewHolder(view, mOnDataClickListener);
         }
     }
 
@@ -59,57 +61,56 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         Calendar cal1 = Calendar.getInstance();
         cal1.setTimeInMillis(Long.parseLong(mMessageList.get(position).getTimestamp()));
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
-        String datetime = dateFormat.format(cal1.getTime());
+        String datetime = dateFormat.format(cal1.getTime()).toLowerCase();
 
         int itemViewType = getItemViewType(position);
-        if (itemViewType == RIGHT_MESSAGE){
-            if (mMessageList.get(position).getType().equals("text")){
+        if (itemViewType == RIGHT_MESSAGE) {
+            if (mMessageList.get(position).getType().equals("text")) {
 
-                ((MessageViewHolder)holder).timestamp.setText(datetime);
-                ((MessageViewHolder)holder).textMessage.setText(mMessageList.get(position).getMessage());
-                ((MessageViewHolder)holder).textMessage.setVisibility(View.VISIBLE);
-                ((MessageViewHolder)holder).imageMessage.setVisibility(View.GONE);
+                ((MessageViewHolder) holder).timestamp.setText(datetime);
+                ((MessageViewHolder) holder).textMessage.setText(mMessageList.get(position).getMessage());
+                ((MessageViewHolder) holder).textMessage.setVisibility(View.VISIBLE);
+                ((MessageViewHolder) holder).imageMessage.setVisibility(View.GONE);
+
             }
-            else if (mMessageList.get(position).getType().equals("image")){
+            else if (mMessageList.get(position).getType().equals("image")) {
 
-                RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(R.drawable.ic_launcher_background).override(100);
+                RequestOptions requestOptions = new RequestOptions().override(500);
 
                 Glide.with(holder.itemView.getContext())
                         .setDefaultRequestOptions(requestOptions)
                         .load(mMessageList.get(position).getMessage())
                         .into(((MessageViewHolder) holder).imageMessage);
 
-                ((MessageViewHolder)holder).timestamp.setText(datetime);
-                ((MessageViewHolder)holder).textMessage.setVisibility(View.GONE);
-                ((MessageViewHolder)holder).imageMessage.setVisibility(View.VISIBLE);
+                ((MessageViewHolder) holder).timestamp.setText(datetime);
+                ((MessageViewHolder) holder).textMessage.setVisibility(View.GONE);
+                ((MessageViewHolder) holder).imageMessage.setVisibility(View.VISIBLE);
             }
 
-        }
-        else if (itemViewType == LEFT_MESSAGE){
-            if (mMessageList.get(position).getType().equals("text")){
+        } else if (itemViewType == LEFT_MESSAGE) {
 
-                ((MessageViewHolder)holder).timestamp.setText(datetime);
-                ((MessageViewHolder)holder).textMessage.setText(mMessageList.get(position).getMessage());
-                ((MessageViewHolder)holder).textMessage.setVisibility(View.VISIBLE);
-                ((MessageViewHolder)holder).imageMessage.setVisibility(View.GONE);
+            if (mMessageList.get(position).getType().equals("text")) {
+
+                ((MessageViewHolder) holder).timestamp.setText(datetime);
+                ((MessageViewHolder) holder).textMessage.setText(mMessageList.get(position).getMessage());
+                ((MessageViewHolder) holder).textMessage.setVisibility(View.VISIBLE);
+                ((MessageViewHolder) holder).imageMessage.setVisibility(View.GONE);
+
             }
-            else if (mMessageList.get(position).getType().equals("image")){
+            else if (mMessageList.get(position).getType().equals("image")) {
 
-                RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(R.drawable.ic_launcher_background).override(100);
+                RequestOptions requestOptions = new RequestOptions().override(500);
 
                 Glide.with(holder.itemView.getContext())
                         .setDefaultRequestOptions(requestOptions)
                         .load(mMessageList.get(position).getMessage())
                         .into(((MessageViewHolder) holder).imageMessage);
 
-                ((MessageViewHolder)holder).timestamp.setText(datetime);
-                ((MessageViewHolder)holder).textMessage.setVisibility(View.GONE);
-                ((MessageViewHolder)holder).imageMessage.setVisibility(View.VISIBLE);
+                ((MessageViewHolder) holder).timestamp.setText(datetime);
+                ((MessageViewHolder) holder).textMessage.setVisibility(View.GONE);
+                ((MessageViewHolder) holder).imageMessage.setVisibility(View.VISIBLE);
             }
         }
-
     }
 
     @Override
@@ -123,10 +124,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
 
-        if (mMessageList.get(position).getSenderUid().equals(mUserId)){
+        if (mMessageList.get(position).getSenderUid().equals(mUserId)) {
             return RIGHT_MESSAGE;
-        }
-        else {
+        } else {
             return LEFT_MESSAGE;
         }
     }
@@ -135,6 +135,16 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mMessageList = msglist;
         mUserId = userId;
         notifyDataSetChanged();
+    }
+
+    public Message getSelectedMessage(int position){
+
+        if (mMessageList != null){
+            if (mMessageList.size() > 0){
+                return mMessageList.get(position);
+            }
+        }
+        return null;
     }
 
 

@@ -6,7 +6,8 @@ import android.os.Parcelable;
 public class ChatUsers implements Parcelable {
 
     private String adImage;
-    private String userImage;
+    private String sellerImage;
+    private String buyerImage;
     private String sellerUsername;
     private String buyerUsername;
     private String adTitle;
@@ -17,9 +18,10 @@ public class ChatUsers implements Parcelable {
     public ChatUsers() {
     }
 
-    public ChatUsers(String adImage, String userImage, String sellerUsername, String buyerUsername, String adTitle, String adId, String sellerUid, String buyerUid) {
+    public ChatUsers(String adImage, String sellerImage,String buyerImage, String sellerUsername, String buyerUsername, String adTitle, String adId, String sellerUid, String buyerUid) {
         this.adImage = adImage;
-        this.userImage = userImage;
+        this.sellerImage = sellerImage;
+        this.buyerImage = buyerImage;
         this.sellerUsername = sellerUsername;
         this.buyerUsername = buyerUsername;
         this.adTitle = adTitle;
@@ -30,7 +32,8 @@ public class ChatUsers implements Parcelable {
 
     protected ChatUsers(Parcel in) {
         adImage = in.readString();
-        userImage = in.readString();
+        sellerImage = in.readString();
+        buyerImage = in.readString();
         sellerUsername = in.readString();
         buyerUsername = in.readString();
         adTitle = in.readString();
@@ -55,8 +58,12 @@ public class ChatUsers implements Parcelable {
         return adImage;
     }
 
-    public String getUserImage() {
-        return userImage;
+    public String getSellerImage() {
+        return sellerImage;
+    }
+
+    public String getBuyerImage() {
+        return buyerImage;
     }
 
     public String getSellerUsername() {
@@ -91,7 +98,8 @@ public class ChatUsers implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(adImage);
-        parcel.writeString(userImage);
+        parcel.writeString(sellerImage);
+        parcel.writeString(buyerImage);
         parcel.writeString(sellerUsername);
         parcel.writeString(buyerUsername);
         parcel.writeString(adTitle);

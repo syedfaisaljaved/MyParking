@@ -1,4 +1,4 @@
-package com.faisaljaved.myparking.WorkFlowActivities.UserProfileActivites;
+package com.faisaljaved.myparking.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,9 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.faisaljaved.myparking.LoginActivity;
 import com.faisaljaved.myparking.R;
-import com.faisaljaved.myparking.WorkFlowActivities.UserProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -65,6 +63,7 @@ public class Settings extends AppCompatActivity {
                 case R.id.user_profile_logout:
                     firebaseAuth.signOut();
                     Intent intent = new Intent(Settings.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                     Toast.makeText(Settings.this, "Logged Out", Toast.LENGTH_SHORT).show();
@@ -78,6 +77,7 @@ public class Settings extends AppCompatActivity {
                         }
                     });
                     Intent intent2 = new Intent(Settings.this, LoginActivity.class);
+                    intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent2);
                     finish();
                 break;

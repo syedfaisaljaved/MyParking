@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WorkFlowActivities.ProfileActivity">
+    tools:context=".Activities.ProfileActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_above="@+id/space"
@@ -23,6 +23,12 @@
                 android:layout_height="wrap_content"
                 android:theme="@style/ToolbarColoredBackArrow">
 
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_my_parking_logo_2"
+                    android:layout_marginLeft="10dp"/>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -38,22 +44,11 @@
 
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmer_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="614dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <include layout="@layout/shimmer_views"/>
-                <include layout="@layout/shimmer_views"/>
-                <include layout="@layout/shimmer_views"/>
-                <include layout="@layout/shimmer_views"/>
-                <include layout="@layout/shimmer_views"/>
-
-            </LinearLayout>
+            <include layout="@layout/shimmer_views" />
 
         </com.facebook.shimmer.ShimmerFrameLayout>
 

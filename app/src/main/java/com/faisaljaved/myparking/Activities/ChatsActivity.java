@@ -1,4 +1,4 @@
-package com.faisaljaved.myparking.WorkFlowActivities;
+package com.faisaljaved.myparking.Activities;
 
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.faisaljaved.myparking.BaseActivity;
-import com.faisaljaved.myparking.PostAdActivity;
 import com.faisaljaved.myparking.R;
 import com.faisaljaved.myparking.adapters.ChatAdapter;
 import com.google.android.material.tabs.TabLayout;
@@ -69,15 +68,18 @@ public class ChatsActivity extends BaseActivity {
 
                     case 0:
                         Intent goToProfile = new Intent(ChatsActivity.this, ProfileActivity.class);
+                        goToProfile.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(goToProfile);
                         break;
                     case 2:
-                        Intent goToChats = new Intent(ChatsActivity.this, MyAdsActivity.class);
-                        startActivity(goToChats);
+                        Intent goToMyAds = new Intent(ChatsActivity.this, MyAdsActivity.class);
+                        goToMyAds.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(goToMyAds);
                         break;
                     case 3:
-                        Intent goToMyAds = new Intent(ChatsActivity.this, UserProfileActivity.class);
-                        startActivity(goToMyAds);
+                        Intent goToUser = new Intent(ChatsActivity.this, UserProfileActivity.class);
+                        goToUser.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(goToUser);
                         break;
                 }
                 overridePendingTransition(0,0);
@@ -85,10 +87,19 @@ public class ChatsActivity extends BaseActivity {
 
             @Override
             public void onItemReselected(int itemIndex, String itemName) {
+
             }
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int flag = getIntent().getFlags();
+        if (flag == Intent.FLAG_ACTIVITY_REORDER_TO_FRONT){
+            spaceNavigationView.changeCurrentItem(1);
+        }
+    }
 
     @Override
     public void onBackPressed() {

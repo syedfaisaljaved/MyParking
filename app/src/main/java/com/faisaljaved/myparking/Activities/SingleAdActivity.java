@@ -1,24 +1,22 @@
-package com.faisaljaved.myparking.WorkFlowActivities.ProfileActivites;
+package com.faisaljaved.myparking.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,9 +24,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.faisaljaved.myparking.BaseActivity;
-import com.faisaljaved.myparking.MessageActivity;
 import com.faisaljaved.myparking.R;
-import com.faisaljaved.myparking.WorkFlowActivities.ChatsActivity;
 import com.faisaljaved.myparking.models.ChatUsers;
 import com.faisaljaved.myparking.models.MyAdData;
 import com.faisaljaved.myparking.models.UserDetails;
@@ -40,10 +36,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageClickListener;
+import com.synnapps.carouselview.ImageListener;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class SingleAdActivity extends BaseActivity {
@@ -54,10 +51,10 @@ public class SingleAdActivity extends BaseActivity {
 
     //Ui Components
     private TextView mTitle, mPrice, mVehicletype, mLocation, mTimeStamp, mDescription, mUsername, mYourAd;
-    private AppCompatImageView mImage;
     private RelativeLayout mParentLayout;
     private LinearLayout mChatButton, mCallButton, mBottomView;
-
+    private CarouselView carouselView;
+    private ImageView mUserImage;
 
     //firebase
     private FirebaseAuth firebaseAuth;
@@ -80,20 +77,33 @@ public class SingleAdActivity extends BaseActivity {
         mVehicletype = findViewById(R.id.view_ad_vehicle_type);
         mLocation = findViewById(R.id._view_ad_location);
         mTimeStamp = findViewById(R.id.view_ad_timestamp);
-        mImage = findViewById(R.id.view_ad_image);
         mDescription = findViewById(R.id.view_ad_description);
         mParentLayout = findViewById(R.id.parent);
         mUsername = findViewById(R.id.view_ad_username);
+        mUserImage = findViewById(R.id.view_ad_user_image);
         mChatButton = findViewById(R.id.view_ad_chat_button);
         mCallButton = findViewById(R.id.view_ad_call_button);
         mBottomView = findViewById(R.id.bottom_view);
         mYourAd = findViewById(R.id.your_ad);
+        carouselView = (CarouselView) findViewById(R.id.carouselView);
 
         mViewModel = new ViewModelProvider(this).get(SingleAdViewModel.class);
 
         showProgressBar(true);
         subscribeObservers();
         getIncomingIntent();
+        carouselView.setPageCount(adData.getImages().size());
+        carouselView.setImageListener(new ImageListener() {
+            @Override
+            public void setImageForPosition(int position, ImageView imageView) {
+
+                Glide.with(SingleAdActivity.this)
+                        .load(adData.getImages().get(position))
+                        .apply(RequestOptions.centerCropTransform())
+                        .into(imageView);
+
+            }
+        });
 
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("MissingPermission")
@@ -111,7 +121,8 @@ public class SingleAdActivity extends BaseActivity {
 
                 connectBothUsers();
                 Intent intent = new Intent(SingleAdActivity.this, MessageActivity.class);
-                intent.putExtra("uid",adData.getUID());
+                intent.putExtra("adDatafromSingleActivity",adData);
+                intent.putExtra("isfromSingleActivity",true);
                 startActivity(intent);
             }
         });
@@ -131,9 +142,8 @@ public class SingleAdActivity extends BaseActivity {
                             String adImage = adData.getImages().get(0);
                             String adTitle = adData.getTitle();
                             String adId = adData.getAdId();
-
                             //fetched username and userimage using callback
-                            final ChatUsers usersList = new ChatUsers(adImage,seller.getImage(),seller.getUsername(),buyer.getUsername(),adTitle,adId,adData.getUID(),userId);
+                            final ChatUsers usersList = new ChatUsers(adImage,seller.getImage(), buyer.getImage(),seller.getUsername(),buyer.getUsername(),adTitle,adId,adData.getUID(),userId);
 
                             final DatabaseReference postReference = reference.child("sellers_buyers");
                             postReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -214,22 +224,18 @@ public class SingleAdActivity extends BaseActivity {
             public void onChanged(UserDetails userDetails) {
                 if (userDetails != null){
                     mUsername.setText(userDetails.getUsername());
+                    Glide.with(SingleAdActivity.this)
+                            .load(userDetails.getImage())
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(mUserImage);
                     setPhoneNumber(userDetails.getNumber());
                 }
             }
         });
     }
 
-    private void setViewAdProperties(MyAdData adData){
+    private void setViewAdProperties(final MyAdData adData){
         if (adData != null){
-
-            RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(R.drawable.blank_image);
-
-            Glide.with(this)
-                    .setDefaultRequestOptions(requestOptions)
-                    .load(adData.getImages().get(0))
-                    .into(mImage);
 
             mTitle.setText(adData.getTitle());
 
@@ -241,7 +247,7 @@ public class SingleAdActivity extends BaseActivity {
 
             mLocation.setText(adData.getLocation());
 
-            long time = adData.getTimestamp();
+            long time = -adData.getTimestamp();
             CharSequence relativeDate = DateUtils.getRelativeTimeSpanString(time, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE);
             mTimeStamp.setText(relativeDate);
 
@@ -263,6 +269,7 @@ public class SingleAdActivity extends BaseActivity {
         showParent();
         showProgressBar(false);
     }
+
 
     private void showParent(){
         mParentLayout.setVisibility(View.VISIBLE);

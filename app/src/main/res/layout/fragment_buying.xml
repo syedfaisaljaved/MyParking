@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WorkFlowActivities.ChatFragments.Buyingfragment">
+    tools:context=".Activities.ChatFragments.Buyingfragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:visibility="gone"

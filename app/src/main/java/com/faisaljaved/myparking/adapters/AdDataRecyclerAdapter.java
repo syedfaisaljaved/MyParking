@@ -29,6 +29,7 @@ public class AdDataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static final int AD_DATA_TYPE = 1;
     private List<MyAdData> mDatalist;
     private OnDataClickListener mOnDataClickListener;
+    private boolean mSwipetoDelete;
 
     public AdDataRecyclerAdapter(OnDataClickListener onDataClickListener) {
         this.mOnDataClickListener = onDataClickListener;
@@ -54,9 +55,8 @@ public class AdDataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        Log.d(TAG, "onBindViewHolder: reached on Bind view");
+        Log.d(TAG, "onBindViewHolder: list "+ mDatalist.get(0).getUID());
         int itemViewType = getItemViewType(position);
-        Log.d(TAG, "onBindViewHolder: itemviewtype "+itemViewType);
         if (itemViewType == AD_DATA_TYPE){
 
             RequestOptions requestOptions = new RequestOptions()
@@ -76,10 +76,15 @@ public class AdDataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ((AdDataViewHolder) holder).mAdVehicleType.setText(vehicletype);
             ((AdDataViewHolder) holder).mAdLocation.setText(mDatalist.get(position).getLocation());
             ((AdDataViewHolder) holder).mAdLocation.setSelected(true);
-            long time = mDatalist.get(position).getTimestamp();
+            long time = -mDatalist.get(position).getTimestamp();
             CharSequence relativeDate = DateUtils.getRelativeTimeSpanString(time, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE);
             ((AdDataViewHolder) holder).mAdTimeStamp.setText(relativeDate);
 
+            if (mSwipetoDelete && position == mDatalist.size()-1){
+                ((AdDataViewHolder) holder).swipeToDelete.setVisibility(View.VISIBLE);
+            }else {
+                ((AdDataViewHolder) holder).swipeToDelete.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -95,6 +100,14 @@ public class AdDataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         mDatalist = adData;
         Log.d(TAG, ": "+ mDatalist);
         notifyDataSetChanged();
+    }
+
+    public void setSwipetoDelete(boolean value){
+        if (mDatalist != null){
+            if (mDatalist.size()>0){
+                mSwipetoDelete = value;
+            }
+        }
     }
 
     @Override

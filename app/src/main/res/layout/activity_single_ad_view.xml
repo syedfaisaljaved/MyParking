@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/parent"
-    android:visibility="gone"
-    tools:context=".WorkFlowActivities.ProfileActivites.SingleAdActivity">
+    android:visibility="visible"
+    tools:context=".Activities.SingleAdActivity">
 
     <ScrollView
         android:layout_above="@+id/bottom_views_layout"
@@ -18,17 +18,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/view_ad_image"
+            <com.synnapps.carouselview.CarouselView
+                android:id="@+id/carouselView"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:scaleType="centerCrop" />
+                android:layout_height="250dp"
+                app:fillColor="#FFFFFFFF"
+                app:pageColor="#00000000"
+                app:disableAutoPlayOnUserInteraction="true"
+                app:radius="6dp"
+                app:autoPlay="true"
+                app:slideInterval="3000"
+                app:strokeColor="#FF777777"
+                app:strokeWidth="1dp"/>
 
             <LinearLayout
                 android:id="@+id/view_ad_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/view_ad_image"
+                android:layout_below="@+id/carouselView"
                 android:padding="15dp"
                 android:orientation="vertical">
 

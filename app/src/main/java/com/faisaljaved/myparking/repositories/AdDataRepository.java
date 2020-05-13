@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.faisaljaved.myparking.AppExecuters;
+import com.faisaljaved.myparking.utils.AppExecuters;
 import com.faisaljaved.myparking.models.MyAdData;
 import com.faisaljaved.myparking.models.UserDetails;
 import com.google.firebase.database.DataSnapshot;
@@ -17,7 +17,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +32,10 @@ public class AdDataRepository {
     private MutableLiveData<List<MyAdData>> mMyAdData;
     private MutableLiveData<MyAdData> mSingleAdData;
     private MutableLiveData<UserDetails> mUserDetails;
-    private static final int LOAD_DATA_SIZE = 3;
+    private static final int LOAD_DATA_LIMIT = 5;
+    private static boolean mIsGettingMoreData = false;
+    private static long mLastTimeStamp;
+    private static List<MyAdData> adDataList;
 
     public static AdDataRepository getInstance(){
         if (instance == null){
@@ -70,23 +72,21 @@ public class AdDataRepository {
             @Override
             public void run() {
                 //retrieve data from firebase
-                final List<MyAdData> adDataList = new ArrayList<>();
+                adDataList = new ArrayList<>();
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("data");
-                Query query = reference.orderByChild("MyAds").limitToLast(LOAD_DATA_SIZE);
+                Query query = reference.orderByChild("timestamp").limitToFirst(LOAD_DATA_LIMIT);
                 query.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d(TAG, "onDataChange: count "+ dataSnapshot.getChildrenCount());
                         adDataList.clear();
                         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                            for (DataSnapshot snapshot: postSnapshot.child("MyAds").getChildren()) {
-                                MyAdData adDataSnapshot = snapshot.getValue(MyAdData.class);
-                                adDataList.add(adDataSnapshot);
-
-                                Log.d(TAG, "onDataChange: timestamp"+snapshot);
-                            }
+                            MyAdData adDataSnapshot = postSnapshot.getValue(MyAdData.class);
+                            Log.d(TAG, "onDataChange: title "+ adDataSnapshot.getTitle());
+                            adDataList.add(adDataSnapshot);
                         }
-                        Collections.reverse(adDataList);
+                        if (adDataList.size() > 0) {
+                            mLastTimeStamp = adDataList.get(adDataList.size() - 1).getTimestamp();
+                        }
                         mAdData.postValue(adDataList);
                     }
 
@@ -95,12 +95,55 @@ public class AdDataRepository {
 
                     }
                 });
-
-
             }
         });
+        AppExecuters.getInstance().networkIO().schedule(new Runnable() {
+            @Override
+            public void run() {
+                //let user know its timed out
+                handler.cancel(true);
+            }
+        }, NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
 
+    }
 
+    public void getMoreData() {
+        final Future handler = AppExecuters.getInstance().networkIO().submit(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "run: end key "+ mLastTimeStamp);
+                //retrieve data from firebase
+                if (!mIsGettingMoreData) {
+                    mIsGettingMoreData = true;
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("data");
+                    Query query = reference.orderByChild("timestamp").startAt(mLastTimeStamp, "timestamp").limitToFirst(LOAD_DATA_LIMIT);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+
+                                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                    MyAdData adDataSnapshot = postSnapshot.getValue(MyAdData.class);
+                                    Log.d(TAG, "onDataChange: title " + adDataSnapshot.getTitle());
+
+                                    if (!adDataList.contains(adDataSnapshot)) {
+                                        adDataList.add(adDataSnapshot);
+                                    }
+                                }
+                                mIsGettingMoreData = false;
+                                mLastTimeStamp = adDataList.get(adDataList.size()-1).getTimestamp();
+                                mAdData.postValue(adDataList);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        });
         AppExecuters.getInstance().networkIO().schedule(new Runnable() {
             @Override
             public void run() {
@@ -119,29 +162,27 @@ public class AdDataRepository {
                 final List<MyAdData> adDataList = new ArrayList<>();
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("data");
                 Query query = reference.orderByChild("timestamp");
-                ValueEventListener valueEventListener = new ValueEventListener() {
+                query.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         adDataList.clear();
-                        for (DataSnapshot postSnapshot: dataSnapshot.child(userId).child("MyAds").getChildren()) {
-                            MyAdData adDataSnapshot = postSnapshot.getValue(MyAdData.class);
-                            adDataList.add(adDataSnapshot);
-                            Log.d(TAG, "onDataChange: timestamp"+postSnapshot);
+                        for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                            if (postSnapshot.child("uid").getValue().equals(userId)){
+                                MyAdData adDataSnapshot = postSnapshot.getValue(MyAdData.class);
+                                adDataList.add(adDataSnapshot);
+                                Log.d(TAG, "onDataChange: timestamp"+postSnapshot);
+                            }
                         }
-                        Collections.reverse(adDataList);
                         mMyAdData.postValue(adDataList);
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
-                };
-                query.addValueEventListener(valueEventListener);
-
+                });
             }
         });
-
-
         AppExecuters.getInstance().networkIO().schedule(new Runnable() {
             @Override
             public void run() {
@@ -157,7 +198,7 @@ public class AdDataRepository {
             @Override
             public void run() {
                 //retrieve data from firebase
-                Query reference = FirebaseDatabase.getInstance().getReference().child("data").child(userId).child("MyAds").child(adId);
+                Query reference = FirebaseDatabase.getInstance().getReference().child("data").child(adId);
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

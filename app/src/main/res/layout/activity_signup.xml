@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".Activities.LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:fitsSystemWindows="true"
         android:id="@+id/signup_relativeLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"

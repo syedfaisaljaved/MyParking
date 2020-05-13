@@ -1,14 +1,16 @@
-package com.faisaljaved.myparking;
+package com.faisaljaved.myparking.Activities;
 
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
+import com.faisaljaved.myparking.BaseActivity;
+import com.faisaljaved.myparking.R;
 import com.faisaljaved.myparking.models.UserDetails;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

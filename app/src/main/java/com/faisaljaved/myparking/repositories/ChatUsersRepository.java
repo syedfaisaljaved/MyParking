@@ -1,23 +1,18 @@
 package com.faisaljaved.myparking.repositories;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.faisaljaved.myparking.AppExecuters;
+import com.faisaljaved.myparking.utils.AppExecuters;
 import com.faisaljaved.myparking.models.ChatUsers;
-import com.faisaljaved.myparking.models.MyAdData;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;

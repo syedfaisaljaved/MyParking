@@ -1,4 +1,4 @@
-package com.faisaljaved.myparking.WorkFlowActivities;
+package com.faisaljaved.myparking.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,18 +7,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.faisaljaved.myparking.BaseActivity;
-import com.faisaljaved.myparking.PostAdActivity;
 import com.faisaljaved.myparking.R;
-import com.faisaljaved.myparking.WorkFlowActivities.ProfileActivites.SingleAdActivity;
 import com.faisaljaved.myparking.adapters.AdDataRecyclerAdapter;
 import com.faisaljaved.myparking.listener.OnDataClickListener;
 import com.faisaljaved.myparking.models.MyAdData;
@@ -40,6 +38,7 @@ public class ProfileActivity extends BaseActivity implements OnDataClickListener
     private AdDataRecyclerAdapter mAdDataRecyclerAdapter;
     private AdDataViewModel mAdDataViewModel;
 
+
     private ShimmerFrameLayout shimmerLayout;
 
     @Override
@@ -58,6 +57,7 @@ public class ProfileActivity extends BaseActivity implements OnDataClickListener
         initRecyclerView();
         subscribeObservers();
         mAdDataViewModel.loadDataFromFirebase();
+
     }
 
     public void subscribeObservers(){
@@ -78,6 +78,15 @@ public class ProfileActivity extends BaseActivity implements OnDataClickListener
         mAdDataRecyclerAdapter = new AdDataRecyclerAdapter(this);
         mRecyclerView.setAdapter(mAdDataRecyclerAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (!mRecyclerView.canScrollVertically(1)){
+                    //search the page
+                    mAdDataViewModel.getMoreData();
+                }
+            }
+        });
 
     }
 
@@ -106,16 +115,19 @@ public class ProfileActivity extends BaseActivity implements OnDataClickListener
                 switch (itemIndex) {
 
                     case 1:
-                        Intent goToProfile = new Intent(ProfileActivity.this, ChatsActivity.class);
-                        startActivity(goToProfile);
-                        break;
-                    case 2:
-                        Intent goToChats = new Intent(ProfileActivity.this, MyAdsActivity.class);
+                        Intent goToChats = new Intent(ProfileActivity.this, ChatsActivity.class);
+                        goToChats.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(goToChats);
                         break;
-                    case 3:
-                        Intent goToMyAds = new Intent(ProfileActivity.this, UserProfileActivity.class);
+                    case 2:
+                        Intent goToMyAds = new Intent(ProfileActivity.this, MyAdsActivity.class);
+                        goToMyAds.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(goToMyAds);
+                        break;
+                    case 3:
+                        Intent goToUSer = new Intent(ProfileActivity.this, UserProfileActivity.class);
+                        goToUSer.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(goToUSer);
                         break;
                 }
                 overridePendingTransition(0,0);
@@ -125,6 +137,12 @@ public class ProfileActivity extends BaseActivity implements OnDataClickListener
             public void onItemReselected(int itemIndex, String itemName) {
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        spaceNavigationView.changeCurrentItem(0);
     }
 
     @Override

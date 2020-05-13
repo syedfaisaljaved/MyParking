@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="3dp">
+    android:layout_marginBottom="3dp"
+    android:id="@+id/parent_sent">
 
     <TextView
         android:id="@+id/text_timestamp"
@@ -35,15 +36,17 @@
         android:textSize="15sp" />
 
     <ImageView
+        android:maxHeight="200dp"
+        android:maxWidth="200dp"
         android:id="@+id/image_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:background="@drawable/sent_message_bubble"
         android:paddingLeft="10dp"
-        android:paddingTop="5dp"
+        android:paddingTop="10dp"
         android:paddingRight="15dp"
-        android:paddingBottom="5dp"
+        android:paddingBottom="10dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"

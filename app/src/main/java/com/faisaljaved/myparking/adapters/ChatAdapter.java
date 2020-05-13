@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.faisaljaved.myparking.WorkFlowActivities.ChatFragments.Buyingfragment;
-import com.faisaljaved.myparking.WorkFlowActivities.ChatFragments.SellingFragment;
+import com.faisaljaved.myparking.Activities.ChatFragments.Buyingfragment;
+import com.faisaljaved.myparking.Activities.ChatFragments.SellingFragment;
 
 public class ChatAdapter extends FragmentPagerAdapter {
 

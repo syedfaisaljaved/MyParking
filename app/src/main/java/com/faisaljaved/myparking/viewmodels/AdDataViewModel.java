@@ -32,4 +32,8 @@ public class AdDataViewModel extends ViewModel {
     public void loadMyAdDataFromFirebase(String userId){
         mAdDataRepository.loadMyAdDataFromFirebase(userId);
     }
+
+    public void getMoreData(){
+        mAdDataRepository.getMoreData();
+    }
 }

@@ -1,8 +1,7 @@
-package com.faisaljaved.myparking;
+package com.faisaljaved.myparking.Activities;
 
 import android.app.ProgressDialog;
 import android.content.ClipData;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,18 +15,25 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.faisaljaved.myparking.BaseActivity;
+import com.faisaljaved.myparking.R;
 import com.faisaljaved.myparking.models.Images;
 import com.faisaljaved.myparking.models.MyAdData;
+import com.faisaljaved.myparking.utils.RealPathUtil;
+import com.gdacciaro.iOSDialog.iOSDialog;
+import com.gdacciaro.iOSDialog.iOSDialogBuilder;
+import com.gdacciaro.iOSDialog.iOSDialogClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -48,10 +54,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.shaohui.advancedluban.Luban;
-import me.shaohui.advancedluban.OnCompressListener;
 import me.shaohui.advancedluban.OnMultiCompressListener;
 
 import static com.faisaljaved.myparking.utils.Constants.LIST_OF_CITIES_INDIA;
+import static com.faisaljaved.myparking.utils.RealPathUtil.getRealPathFromURI_API19;
 
 public class PostAdActivity extends BaseActivity {
 
@@ -65,12 +71,13 @@ public class PostAdActivity extends BaseActivity {
     private TextInputLayout mTitle, mDescription, mPrice;
     private ImageView mImageView;
     private LinearLayout mImagesLayout;
-    private Spinner mSpinner;
+    private RadioGroup radioGroup;
     private Toolbar toolbar;
-    private String mVehicleType = "Two Wheeler";
-    private List<Images> mSelectedImages;
+    private String mVehicleType;
+    private List<Uri> mSelectedImages;
+    private List<File> mFileList;
     private List<String> mSelectedImagesURL;
-    private AlertDialog.Builder dialogBuilder;
+    private iOSDialogBuilder iOSDialogBuilder;
 
     //firebase
     private FirebaseAuth firebaseAuth;
@@ -91,10 +98,10 @@ public class PostAdActivity extends BaseActivity {
         mImagePicker = findViewById(R.id.post_ad_choose_image);
         mImageView = findViewById(R.id.image1);
         mPostAdButton = findViewById(R.id.post_ad_button);
+        radioGroup = findViewById(R.id.radio_group);
         mTitle = (TextInputLayout) findViewById(R.id.post_ad_title);
         mDescription = (TextInputLayout) findViewById(R.id.post_ad_description);
         mPrice = (TextInputLayout) findViewById(R.id.post_ad_price);
-        mSpinner = (Spinner) findViewById(R.id.post_ad_spinner);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mLocation = findViewById(R.id.choose_location);
 
@@ -107,6 +114,7 @@ public class PostAdActivity extends BaseActivity {
         //list initialize
         mSelectedImages = new ArrayList<>();
         mSelectedImagesURL = new ArrayList<>();
+        mFileList = new ArrayList<>();
 
         //firebase
         initFirebase();
@@ -121,32 +129,30 @@ public class PostAdActivity extends BaseActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialogBuilder.create().show();
+                iOSDialogBuilder.build().show();
             }
         });
 
-        //image selection array
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this,R.array.vehicle_type, android.R.layout.simple_spinner_item);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinner.setAdapter(arrayAdapter);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        //radio listener
+        RadioButton radioButton = radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
+        mVehicleType = radioButton.getText().toString();
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String vehicle = adapterView.getItemAtPosition(i).toString();
-                setmVehicleType(vehicle);
-            }
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedid) {
+                RadioButton checkRButton = radioGroup.findViewById(checkedid);
+                boolean isChecked = checkRButton.isChecked();
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+                if(isChecked){
+                    setmVehicleType(checkRButton.getText().toString());
+                }
             }
         });
+
 
         mPostAdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 confirmInputs();
-                uploadImage();
             }
         });
 
@@ -154,10 +160,10 @@ public class PostAdActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 pickImage();
+
             }
         });
     }
-
 
     private void initFirebase() {
         firebaseAuth = FirebaseAuth.getInstance();
@@ -169,18 +175,23 @@ public class PostAdActivity extends BaseActivity {
     }
 
     private void initAlertDialogBox() {
-        dialogBuilder = new AlertDialog.Builder(PostAdActivity.this)
+        iOSDialogBuilder = new iOSDialogBuilder(PostAdActivity.this)
                 .setTitle("Are you sure?")
-                .setMessage("All changes will be lost")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setSubtitle("All your changes will be lost.")
+                .setBoldPositiveLabel(true)
+                .setCancelable(false)
+                .setPositiveListener(getString(R.string.ok),new iOSDialogClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(iOSDialog dialog) {
                         finish();
+                        dialog.dismiss();
+
                     }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                })
+                .setNegativeListener(getString(R.string.dismiss), new iOSDialogClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
+                    public void onClick(iOSDialog dialog) {
+                        dialog.dismiss();
                     }
                 });
     }
@@ -195,67 +206,58 @@ public class PostAdActivity extends BaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        mSelectedImages.clear();
+        mFileList.clear();
         if (requestCode == PICK_IMAGE_REQUEST_CODE && resultCode == RESULT_OK && data !=null) {
             ClipData clipData = data.getClipData();
-            mSelectedImages.clear();
             if (clipData != null){
-                List<File> fileList = new ArrayList<>();
-                for (int i = 0; i < clipData.getItemCount(); i++) {
-                    Uri uri = clipData.getItemAt(i).getUri();
-                    fileList.add(new File(uri.getPath()));
+                if (clipData.getItemCount() < 5) {
+                    for (int i = 0; i < clipData.getItemCount(); i++) {
+                        Uri uri = clipData.getItemAt(i).getUri();
+                        mSelectedImages.add(uri);
+                        File file = new File(getRealPathFromURI_API19(this,uri));
+                        mFileList.add(file);
+                    }
                 }
-                compressMultipleImage(fileList);
-
-            }else {
+                else {
+                    Toast.makeText(this, "Can't select more than 5 Photos", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else {
                 Uri uri = data.getData();
-                compressImage(uri);
+                mSelectedImages.add(uri);
+                File file = new File(getRealPathFromURI_API19(this,uri));
+                mFileList.add(file);
             }
         }
-
         emptyViews();
         loadImage();
     }
 
-    private void compressMultipleImage(List<File> fileList) {
-        Luban.compress(this, fileList)
-                .setMaxSize(200)
+    private void compressImages(List<File> mFileList){
+        if (mFileList.isEmpty()){
+            return;
+        }
+
+        Luban.compress(this, mFileList)
                 .putGear(Luban.CUSTOM_GEAR)
                 .launch(new OnMultiCompressListener() {
                     @Override
                     public void onStart() {
-
+                        Log.i(TAG, "start");
                     }
 
                     @Override
                     public void onSuccess(List<File> fileList) {
-                        for (int i = 0; i < fileList.size(); i++) {
+                        List<Images> imagesList = new ArrayList<>();
+
+                        for (int i = 0; i <fileList.size(); i++) {
+                            Log.d(TAG, "onSuccess: "+ fileList.get(i));
                             Uri uri = Uri.fromFile(fileList.get(i));
-                            mSelectedImages.add(new Images(getFileNameFromImageUri(uri),uri));
+                            imagesList.add(new Images(getFileNameFromImageUri(uri),uri));
                         }
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                });
-    }
-
-    private void compressImage(Uri resultUri) {
-        File file = new File(resultUri.getPath());
-        Luban.compress(file, getFilesDir())
-                .setMaxSize(200)
-                .putGear(Luban.CUSTOM_GEAR)
-                .launch(new OnCompressListener() {
-                    @Override
-                    public void onStart() {
-
-                    }
-
-                    @Override
-                    public void onSuccess(File file) {
-                        Uri uri = Uri.fromFile(file);
-                        mSelectedImages.add(new Images(getFileNameFromImageUri(uri),uri));
+                        uploadImage(imagesList);
                     }
 
                     @Override
@@ -264,6 +266,7 @@ public class PostAdActivity extends BaseActivity {
                     }
                 });
     }
+
 
     public String getFileNameFromImageUri(Uri uri) {
         String result = null;
@@ -302,12 +305,11 @@ public class PostAdActivity extends BaseActivity {
             for (int i = 0; i < mSelectedImages.size(); i++) {
                 View view = mImagesLayout.getChildAt(i+1);
                 if (view instanceof ImageView) {
-                    RequestOptions requestOptions = new RequestOptions()
-                            .placeholder(R.drawable.ic_launcher_background);
+                    RequestOptions requestOptions = new RequestOptions();
 
                     Glide.with(this)
                             .setDefaultRequestOptions(requestOptions)
-                            .load(mSelectedImages.get(i).getImageUri())
+                            .load(mSelectedImages.get(i))
                             .into((ImageView) view);
                     view.setVisibility(View.VISIBLE);
                 }
@@ -321,21 +323,18 @@ public class PostAdActivity extends BaseActivity {
         }
     }
 
-    private void uploadImage() {
+    private void uploadImage(final List<Images> imagesList) {
         progressDialog.setMessage("Uploading");
-//        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-//        progressDialog.setIndeterminate(true);
-//        progressDialog.setProgress(0);
 
         mSelectedImagesURL.clear();
-        if (mSelectedImages.size() != 0) {
+        if (imagesList.size() != 0) {
             counter = 0;
             final StorageReference storageReference = firebaseStorage.getReference().child("userData");
-            for (int i = 0; i < mSelectedImages.size(); i++) {
+            for (int i = 0; i < imagesList.size(); i++) {
                 final int finalI = i;
-                final StorageReference imageTOBeUploaded = storageReference.child(mSelectedImages.get(i).getImageName());
+                final StorageReference imageTOBeUploaded = storageReference.child(imagesList.get(i).getImageName());
 
-                imageTOBeUploaded.putFile(mSelectedImages.get(i).getImageUri())
+                imageTOBeUploaded.putFile(imagesList.get(i).getImageUri())
                         .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -348,17 +347,17 @@ public class PostAdActivity extends BaseActivity {
                                         mSelectedImagesURL.add(task.getResult().toString());
                                         Log.d(TAG, "onComplete: image received" +mSelectedImagesURL);
 
-                                        if (counter == mSelectedImages.size()){
+                                        if (counter == imagesList.size()){
                                             saveLinkToFirebase();
                                         }
                                     } else {
-                                        storageReference.child(mSelectedImages.get(finalI).getImageName()).delete();
+                                        storageReference.child(imagesList.get(finalI).getImageName()).delete();
                                     }
                                 }
                             });
                         } else {
                             counter++;
-                            Toast.makeText(PostAdActivity.this, "Couldn't upload " + mSelectedImages.get(finalI).getImageName(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PostAdActivity.this, "Couldn't upload " + imagesList.get(finalI).getImageName(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -368,6 +367,9 @@ public class PostAdActivity extends BaseActivity {
                     }
                 });
             }
+        }
+        else {
+            Toast.makeText(this, "Upload Images First", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -379,7 +381,7 @@ public class PostAdActivity extends BaseActivity {
         String price = mPrice.getEditText().getText().toString().trim();
         String vehicleType = getmVehicleType();
         String location = mLocation.getEditableText().toString();
-        Long timestamp = System.currentTimeMillis();
+        Long timestamp = -System.currentTimeMillis();
         String uid = userId;
 
         final MyAdData myAdData = new MyAdData(uniqueId,uid,title,description,price,vehicleType,location,timestamp,mSelectedImagesURL);
@@ -387,7 +389,7 @@ public class PostAdActivity extends BaseActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                reference.child("data").child(userId).child("MyAds").child(uniqueId).setValue(myAdData);
+                reference.child("data").child(uniqueId).setValue(myAdData);
                 progressDialog.cancel();
                 finish();
             }
@@ -403,6 +405,7 @@ public class PostAdActivity extends BaseActivity {
         if (!validate()){
             return;
         }
+        compressImages(mFileList);
     }
 
     private boolean validate(){
@@ -453,6 +456,6 @@ public class PostAdActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        dialogBuilder.create().show();
+        iOSDialogBuilder.build().show();
     }
 }

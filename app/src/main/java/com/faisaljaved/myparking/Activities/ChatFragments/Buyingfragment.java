@@ -1,4 +1,4 @@
-package com.faisaljaved.myparking.WorkFlowActivities.ChatFragments;
+package com.faisaljaved.myparking.Activities.ChatFragments;
 
 
 import android.content.Intent;
@@ -18,10 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.faisaljaved.myparking.MessageActivity;
-import com.faisaljaved.myparking.PostAdActivity;
+import com.faisaljaved.myparking.Activities.MessageActivity;
+import com.faisaljaved.myparking.Activities.PostAdActivity;
 import com.faisaljaved.myparking.R;
 import com.faisaljaved.myparking.adapters.ChatUsersListAdapter;
 import com.faisaljaved.myparking.listener.OnDataClickListener;
@@ -32,12 +31,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class SellingFragment extends Fragment implements OnDataClickListener {
+public class Buyingfragment extends Fragment implements OnDataClickListener {
 
-    private static final String TAG = "SellingFragment";
+    private static final String TAG = "Buyingfragment";
 
     //Ui components
     private RecyclerView recyclerView;
@@ -46,11 +42,12 @@ public class SellingFragment extends Fragment implements OnDataClickListener {
 
     private ChatUsersListAdapter chatUsersListAdapter;
     private ChatUsersViewModel chatUsersViewModel;
+
     //firebase
     private FirebaseUser mUser;
     private String mUserId;
 
-    public SellingFragment() {
+    public Buyingfragment() {
         // Required empty public constructor
     }
 
@@ -70,9 +67,9 @@ public class SellingFragment extends Fragment implements OnDataClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_selling, container, false);
+        View view = inflater.inflate(R.layout.fragment_buying, container, false);
 
-        recyclerView = view.findViewById(R.id.selling_recycler_view);
+        recyclerView = view.findViewById(R.id.buying_recycler_view);
         mNoMsg = view.findViewById(R.id.no_messages_yet);
         mStartSelling = view.findViewById(R.id.start_selling_tv);
         mStartSelling.setOnClickListener(new View.OnClickListener() {
@@ -85,15 +82,16 @@ public class SellingFragment extends Fragment implements OnDataClickListener {
 
         initRectyclerview();
         subscribeObservers();
-        chatUsersViewModel.loadSellingUsersFromFirebase(mUserId);
+        chatUsersViewModel.loadBuyingUsersFromFirebase(mUserId);
 
         return view;
     }
 
     private void subscribeObservers() {
-        chatUsersViewModel.getSellersList().observe(getViewLifecycleOwner(), new Observer<List<ChatUsers>>() {
+        chatUsersViewModel.getBuyersList().observe(getViewLifecycleOwner(), new Observer<List<ChatUsers>>() {
             @Override
             public void onChanged(List<ChatUsers> chatUsers) {
+                Log.d(TAG, "onChanged: "+chatUsers);
                 if (chatUsers!= null){
                     if (chatUsers.size() == 0){
                         recyclerView.setVisibility(View.GONE);
@@ -105,6 +103,7 @@ public class SellingFragment extends Fragment implements OnDataClickListener {
                         mNoMsg.setVisibility(View.GONE);
                         mStartSelling.setVisibility(View.GONE);
                     }
+
                 }
             }
         });
@@ -118,13 +117,13 @@ public class SellingFragment extends Fragment implements OnDataClickListener {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setHasFixedSize(true);
+
     }
 
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(getActivity(), MessageActivity.class);
-        intent.putExtra("userData",chatUsersListAdapter.getSelectedSUserData(position));
-        intent.putExtra("sellerFragment", "sent");
+        intent.putExtra("userData",chatUsersListAdapter.getSelectedBUserData(position));
         startActivity(intent);
     }
 }
