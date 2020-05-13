@@ -7,8 +7,6 @@ import com.faisaljaved.myparking.models.MyAdData;
 import com.faisaljaved.myparking.models.UserDetails;
 import com.faisaljaved.myparking.repositories.AdDataRepository;
 
-import java.util.List;
-
 public class SingleAdViewModel extends ViewModel {
 
     private AdDataRepository mAdDataRepository;

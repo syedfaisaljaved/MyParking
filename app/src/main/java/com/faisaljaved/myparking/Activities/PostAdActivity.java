@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -17,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +28,6 @@ import com.faisaljaved.myparking.BaseActivity;
 import com.faisaljaved.myparking.R;
 import com.faisaljaved.myparking.models.Images;
 import com.faisaljaved.myparking.models.MyAdData;
-import com.faisaljaved.myparking.utils.RealPathUtil;
 import com.gdacciaro.iOSDialog.iOSDialog;
 import com.gdacciaro.iOSDialog.iOSDialogBuilder;
 import com.gdacciaro.iOSDialog.iOSDialogClickListener;
@@ -380,7 +377,7 @@ public class PostAdActivity extends BaseActivity {
         String description = mDescription.getEditText().getText().toString().trim();
         String price = mPrice.getEditText().getText().toString().trim();
         String vehicleType = getmVehicleType();
-        String location = mLocation.getEditableText().toString();
+        String location = mLocation.getEditableText().toString().trim();
         Long timestamp = -System.currentTimeMillis();
         String uid = userId;
 

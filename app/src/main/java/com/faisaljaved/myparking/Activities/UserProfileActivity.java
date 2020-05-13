@@ -1,9 +1,5 @@
 package com.faisaljaved.myparking.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +11,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -44,8 +44,6 @@ import java.io.File;
 
 import me.shaohui.advancedluban.Luban;
 import me.shaohui.advancedluban.OnCompressListener;
-
-import static com.faisaljaved.myparking.utils.RealPathUtil.getRealPathFromURI_API19;
 
 public class UserProfileActivity extends BaseActivity {
 

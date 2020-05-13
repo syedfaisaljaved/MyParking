@@ -1,12 +1,12 @@
 package com.faisaljaved.myparking.Activities;
 
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import com.faisaljaved.myparking.BaseActivity;
 import com.faisaljaved.myparking.R;

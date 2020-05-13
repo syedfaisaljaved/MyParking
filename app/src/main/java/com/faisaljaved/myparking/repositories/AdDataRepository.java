@@ -6,9 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.faisaljaved.myparking.utils.AppExecuters;
 import com.faisaljaved.myparking.models.MyAdData;
 import com.faisaljaved.myparking.models.UserDetails;
+import com.faisaljaved.myparking.utils.AppExecuters;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,7 +32,7 @@ public class AdDataRepository {
     private MutableLiveData<List<MyAdData>> mMyAdData;
     private MutableLiveData<MyAdData> mSingleAdData;
     private MutableLiveData<UserDetails> mUserDetails;
-    private static final int LOAD_DATA_LIMIT = 5;
+    private static final int LOAD_DATA_LIMIT = 10;
     private static boolean mIsGettingMoreData = false;
     private static long mLastTimeStamp;
     private static List<MyAdData> adDataList;

@@ -3,12 +3,9 @@ package com.faisaljaved.myparking.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
-
 import android.net.Uri;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-
-import androidx.loader.content.CursorLoader;
 
 public class RealPathUtil {
 

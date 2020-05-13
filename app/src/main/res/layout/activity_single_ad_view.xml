@@ -49,6 +49,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textStyle="bold"
                     android:id="@+id/view_ad_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -78,17 +79,16 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_marginRight="5dp"
-                        android:src="@drawable/ic_location" />
+                        android:src="@drawable/location" />
 
                     <TextView
+                        android:textColor="@color/black"
                         android:id="@+id/_view_ad_location"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:ellipsize="marquee"
-                        android:textAllCaps="true"
                         android:textSize="14sp"
-                        android:textStyle="bold"
                         tools:text="@string/location" />
 
                     <TextView
@@ -98,7 +98,6 @@
                         android:layout_weight="1"
                         android:ellipsize="marquee"
                         android:gravity="right"
-                        android:textAllCaps="true"
                         android:textSize="14sp"
                         tools:text="@string/timestamp" />
 

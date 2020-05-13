@@ -3,9 +3,7 @@ package com.faisaljaved.myparking.viewmodels;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.faisaljaved.myparking.models.ChatUsers;
 import com.faisaljaved.myparking.models.Message;
-import com.faisaljaved.myparking.repositories.ChatUsersRepository;
 import com.faisaljaved.myparking.repositories.MessageRepository;
 
 import java.util.List;

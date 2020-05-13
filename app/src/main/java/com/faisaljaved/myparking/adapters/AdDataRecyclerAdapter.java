@@ -10,16 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.faisaljaved.myparking.R;
 import com.faisaljaved.myparking.listener.OnDataClickListener;
 import com.faisaljaved.myparking.models.MyAdData;
 
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Locale;
 
 
 public class AdDataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -67,9 +64,9 @@ public class AdDataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     .load(mDatalist.get(position).getImages().get(0))
                     .into(((AdDataViewHolder) holder).mAdImage);
 
-
-            String price = NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(Integer.parseInt(mDatalist.get(position).getPrice()));
-            ((AdDataViewHolder)holder).mAdPrice.setText(price);
+            DecimalFormat inr = new DecimalFormat("##,##,##0");
+            String price = inr.format(Integer.parseInt(mDatalist.get(position).getPrice()));
+            ((AdDataViewHolder)holder).mAdPrice.setText("\u20B9"+price);
             ((AdDataViewHolder)holder).mAdTitle.setText(mDatalist.get(position).getTitle());
             ((AdDataViewHolder) holder).mAdTitle.setSelected(true);
             String vehicletype = "PARKING: "+ mDatalist.get(position).getVehicleType();

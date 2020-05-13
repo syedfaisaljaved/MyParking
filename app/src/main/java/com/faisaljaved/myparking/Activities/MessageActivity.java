@@ -1,15 +1,7 @@
 package com.faisaljaved.myparking.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,19 +18,26 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.faisaljaved.myparking.BaseActivity;
 import com.faisaljaved.myparking.R;
 import com.faisaljaved.myparking.adapters.MessageAdapter;
-import com.faisaljaved.myparking.adapters.MessageViewHolder;
 import com.faisaljaved.myparking.listener.OnDataClickListener;
 import com.faisaljaved.myparking.models.ChatUsers;
 import com.faisaljaved.myparking.models.Images;
 import com.faisaljaved.myparking.models.Message;
 import com.faisaljaved.myparking.models.MyAdData;
 import com.faisaljaved.myparking.models.UserDetails;
-import com.faisaljaved.myparking.utils.RealPathUtil;
 import com.faisaljaved.myparking.viewmodels.MessageViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -57,11 +56,10 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 import me.shaohui.advancedluban.Luban;
 import me.shaohui.advancedluban.OnCompressListener;
-
-import static com.faisaljaved.myparking.utils.RealPathUtil.getRealPathFromURI_API19;
 
 public class MessageActivity extends BaseActivity implements OnDataClickListener {
 
@@ -74,6 +72,8 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
     private EditText type_message;
     private ImageView sendIcon, addIcon;
     private RelativeLayout sendmask;
+
+    private ProgressDialog progressDialog;
 
     private String sellerFragmentString;
     private ChatUsers userData;
@@ -106,6 +106,9 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
         recyclerView = findViewById(R.id.message_recycler_view);
 
         viewModel = new ViewModelProvider(this).get(MessageViewModel.class);
+
+        //progressDialog
+        progressDialog = new ProgressDialog(this);
 
         //textchange listener
         type_message.addTextChangedListener(textChangeListener);
@@ -140,9 +143,7 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
         }
 
         if (userData != null && !isfromSingleActivity) {
-            showProgressBar(true);
             setUserProperties();
-
             initRecyclerView();
             subscribeObservers();
 
@@ -162,7 +163,7 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
             postReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.child(userData.getSellerUid()).child("selling").child(userData.getAdId()).child(userId).exists()){
+                    if (!dataSnapshot.child(userData.getSellerUid()).child("selling").child(userData.getAdId()).child(userId).exists()) {
                         postReference.child(userData.getSellerUid()).child("selling").child(userData.getAdId()).child(userId).setValue(userData);
                     }
                 }
@@ -172,13 +173,12 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
 
                 }
             });
-        }
-        else {
+        } else {
             final DatabaseReference postReference = reference.child("sellers_buyers");
             postReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.child(userData.getBuyerUid()).child("buying").child(userId).child(userData.getAdId()).exists()){
+                    if (!dataSnapshot.child(userData.getBuyerUid()).child("buying").child(userId).child(userData.getAdId()).exists()) {
                         postReference.child(userData.getBuyerUid()).child("buying").child(userId).child(userData.getAdId()).setValue(userData);
                     }
                 }
@@ -231,6 +231,8 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
 
 
     private void uploadImageMessage(File file) {
+        progressDialog.setMessage("Uploading...");
+        progressDialog.show();
         StorageReference storeRef = FirebaseStorage.getInstance().getReference();
         final StorageReference postRef;
         Images profileImage = new Images(file.getName(), Uri.fromFile(file));
@@ -281,7 +283,6 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
     }
 
 
-
     private void fetchChatUser(final MyCallback myCallback) {
 
         DatabaseReference buyref = reference.child("sellers_buyers").child(userId).child("buying").child(adData.getUID()).child(adData.getAdId());
@@ -305,14 +306,16 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
             @Override
             public void onChanged(List<Message> messages) {
                 adapter.setMessages(messages, userId);
-                showProgressBar(false);
+                progressDialog.dismiss();
+
                 recyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        showProgressBar(false);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        progressDialog.dismiss();
+                        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
                     }
-                }, 1000);
-                recyclerView.scrollToPosition(adapter.getItemCount()-1);
+                }, 100);
             }
         });
     }
@@ -321,9 +324,9 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
         adapter = new MessageAdapter(this);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//        layoutManager.setStackFromEnd(true);
+        layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
+
     }
 
     TextWatcher textChangeListener = new TextWatcher() {
@@ -441,7 +444,7 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
     private void setToolbar() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -507,17 +510,17 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
 
     @Override
     public void onItemClick(int position) {
-        if (adapter.getSelectedMessage(position).getType().equals("image")){
+        if (adapter.getSelectedMessage(position).getType().equals("image")) {
             imagePopUp(position);
         }
 
     }
 
-    public void imagePopUp(int position){
-        final Dialog nagDialog = new Dialog(this,android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+    public void imagePopUp(int position) {
+        final Dialog nagDialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
         nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         nagDialog.setContentView(R.layout.preview_image);
-        ImageView ivPreview = (ImageView)nagDialog.findViewById(R.id.iv_preview_image);
+        ImageView ivPreview = (ImageView) nagDialog.findViewById(R.id.iv_preview_image);
 
         Glide.with(this)
                 .load(adapter.getSelectedMessage(position).getMessage())
@@ -528,13 +531,13 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.items,menu);
+        inflater.inflate(R.menu.items, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.delete_menu){
+        if (item.getItemId() == R.id.delete_menu) {
             deletechat();
             finish();
         }
@@ -549,7 +552,7 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     postReference.child(userId).child("buying").child(userData.getSellerUid()).child(userData.getAdId()).removeValue();
-                    if (!dataSnapshot.child(userData.getSellerUid()).child("selling").child(userData.getAdId()).child(userId).exists()){
+                    if (!dataSnapshot.child(userData.getSellerUid()).child("selling").child(userData.getAdId()).child(userId).exists()) {
                         clearchats();
                     }
                 }
@@ -559,13 +562,12 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
 
                 }
             });
-        }
-        else {
+        } else {
             postReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     postReference.child(userId).child("selling").child(userData.getAdId()).child(userData.getBuyerUid()).removeValue();
-                    if (!dataSnapshot.child(userData.getBuyerUid()).child("buying").child(userId).child(userData.getAdId()).exists()){
+                    if (!dataSnapshot.child(userData.getBuyerUid()).child("buying").child(userId).child(userData.getAdId()).exists()) {
                         clearchats();
                     }
                 }

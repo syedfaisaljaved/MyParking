@@ -1,12 +1,6 @@
 package com.faisaljaved.myparking.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -14,12 +8,15 @@ import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -37,11 +34,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.synnapps.carouselview.CarouselView;
-import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
 
-import java.text.NumberFormat;
-import java.util.Locale;
+import java.text.DecimalFormat;
 
 public class SingleAdActivity extends BaseActivity {
 
@@ -239,8 +234,10 @@ public class SingleAdActivity extends BaseActivity {
 
             mTitle.setText(adData.getTitle());
 
-            String price = NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(Integer.parseInt(adData.getPrice()));
-            mPrice.setText(price);
+            DecimalFormat inr = new DecimalFormat("##,##,##0");
+            String price = inr.format(Integer.parseInt(adData.getPrice()));
+
+            mPrice.setText("\u20B9"+price+" (Per Month)");
 
             String vehicletype = "PARKING: "+ adData.getVehicleType();
             mVehicletype.setText(vehicletype);
