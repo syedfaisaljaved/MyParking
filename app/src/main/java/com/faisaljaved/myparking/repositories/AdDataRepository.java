@@ -117,7 +117,7 @@ public class AdDataRepository {
                     mIsGettingMoreData = true;
                     DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("data");
                     Query query = reference.orderByChild("timestamp").startAt(mLastTimeStamp, "timestamp").limitToFirst(LOAD_DATA_LIMIT);
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    query.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {

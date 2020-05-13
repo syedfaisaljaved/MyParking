@@ -137,6 +137,8 @@ public class SingleAdActivity extends BaseActivity {
                             String adImage = adData.getImages().get(0);
                             String adTitle = adData.getTitle();
                             String adId = adData.getAdId();
+
+                            Log.d(TAG, "onCallback: "+adId);
                             //fetched username and userimage using callback
                             final ChatUsers usersList = new ChatUsers(adImage,seller.getImage(), buyer.getImage(),seller.getUsername(),buyer.getUsername(),adTitle,adId,adData.getUID(),userId);
 
@@ -144,6 +146,7 @@ public class SingleAdActivity extends BaseActivity {
                             postReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    Log.d(TAG, "onDataChange: "+dataSnapshot.child(userId).child("buying").child(adData.getUID()).child(adData.getAdId()).exists());
                                     if (!dataSnapshot.child(userId).child("buying").child(adData.getUID()).child(adData.getAdId()).exists()) {
 
                                         postReference.child(userId).child("buying").child(adData.getUID()).child(adData.getAdId()).setValue(usersList);

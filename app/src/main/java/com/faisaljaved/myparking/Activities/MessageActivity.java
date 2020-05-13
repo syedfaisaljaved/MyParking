@@ -129,15 +129,16 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
                 @Override
                 public void onCallback(ChatUsers value) {
                     userData = value;
-                    showProgressBar(true);
+                    Log.d(TAG, "onCallback: callback list  "+ userData);
                     initRecyclerView();
                     subscribeObservers();
-
-                    if (sellerFragmentString != null) {
-                        viewModel.loadMessagesFromFirebase(userId, userData.getBuyerUid(), userData.getAdId());
-                    } else {
+                    if(userData != null) {
                         viewModel.loadMessagesFromFirebase(userId, userData.getSellerUid(), userData.getAdId());
                     }
+//                    if (sellerFragmentString != null) {
+//                        viewModel.loadMessagesFromFirebase(userId, userData.getBuyerUid(), userData.getAdId());
+//                    } else {
+//                    }
                 }
             });
         }
@@ -313,7 +314,9 @@ public class MessageActivity extends BaseActivity implements OnDataClickListener
                     public void run() {
                         recyclerView.setVisibility(View.VISIBLE);
                         progressDialog.dismiss();
-                        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
+                        if (adapter.getItemCount()-1 > -1) {
+                            recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                        }
                     }
                 }, 100);
             }

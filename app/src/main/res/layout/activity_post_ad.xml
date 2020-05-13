@@ -168,6 +168,7 @@
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="textCapSentences"
                     android:maxLength="80"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -187,6 +188,7 @@
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="textCapSentences"
                     android:maxLength="1000"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

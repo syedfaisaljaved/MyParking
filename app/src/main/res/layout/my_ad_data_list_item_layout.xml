@@ -67,17 +67,16 @@
                     tools:text="@string/price" />
 
                 <TextView
+                    android:layout_marginRight="5dp"
                     android:textStyle="bold"
                     android:id="@+id/ad_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:ellipsize="marquee"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:marqueeRepeatLimit="marquee_forever"
+                    android:requiresFadingEdge="horizontal"
+                    android:fadingEdgeLength="40dp"
+                    android:ellipsize="none"
                     android:singleLine="true"
-                    android:scrollHorizontally="true"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     tools:text="@string/title" />
@@ -112,18 +111,16 @@
                         android:id="@+id/ad_location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:marqueeRepeatLimit="marquee_forever"
+                        android:requiresFadingEdge="horizontal"
+                        android:fadingEdgeLength="40dp"
+                        android:ellipsize="none"
                         android:singleLine="true"
-                        android:scrollHorizontally="true"
                         android:textSize="12sp"
                         tools:text="@string/location" />
 
                     <TextView
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_alignParentRight="true"
                         android:id="@+id/ad_timestamp"
                         android:layout_width="wrap_content"
